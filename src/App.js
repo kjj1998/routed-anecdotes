@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import {
-	BrowserRouter as Router,
 	Switch, Route, Link,
-	useParams, useHistory
+	useHistory, useRouteMatch
 } from "react-router-dom"
 
 const Menu = () => {
@@ -31,9 +30,7 @@ const AnecdoteList = ({ anecdotes }) => (
   </div>
 )
 
-const Anecdote = ({ anecdotes }) => {
-	const id = useParams().id
-	const anecdote = anecdotes.find(a => a.id === id)
+const Anecdote = ({ anecdote }) => {
 	return (
 		<div>
 			<h2>{anecdote.content} by {anecdote.author}</h2>
@@ -128,6 +125,11 @@ const App = () => {
 
   const [notification, setNotification] = useState('')
 
+	const match = useRouteMatch('/anecdotes/:id')
+	const anecdote = match 
+		? anecdotes.find(anecdote => anecdote.id === match.params.id)
+		: null
+	
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
@@ -148,7 +150,6 @@ const App = () => {
   }
 
   return (
-		<Router>
 			<div>
 				<h1>Software anecdotes</h1>
 				<Menu />
@@ -161,7 +162,7 @@ const App = () => {
 						<About />
 					</Route>
 					<Route path="/anecdotes/:id">
-						<Anecdote anecdotes={anecdotes} />
+						<Anecdote anecdote={anecdote} />
 					</Route>
 					<Route path="/">
 						<AnecdoteList anecdotes={anecdotes} />
@@ -169,7 +170,6 @@ const App = () => {
 				</Switch>
 				<Footer />
 			</div>
-		</Router>
   )
 }
 
