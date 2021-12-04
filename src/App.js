@@ -4,6 +4,7 @@ import {
 	useHistory, useRouteMatch
 } from "react-router-dom"
 import { useField } from './hooks'
+import { Table, Form, Button, Alert, Navbar, Nav } from 'react-bootstrap'
 
 const Menu = () => {
   const padding = {
@@ -11,9 +12,22 @@ const Menu = () => {
   }
   return (
     <div>
-      <Link style={padding} to="/">anecdotes</Link>
-      <Link style={padding} to="/create">create new</Link>
-      <Link style={padding} to="/about">about</Link>
+			<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+				<Navbar.Toggle aria-controls="responsive-navbar-nav" />
+				<Navbar.Collapse id="responsive-navbar-nav">
+					<Nav className="mr-auto">
+						<Nav.Link href="#" as="span">
+							<Link style={padding} to="/">anecdotes</Link>
+						</Nav.Link>
+						<Nav.Link href="#" as="span">
+							<Link style={padding} to="/create">create new</Link>
+						</Nav.Link>
+						<Nav.Link href="#" as="span">
+							<Link style={padding} to="/about">about</Link>
+						</Nav.Link>
+					</Nav>
+				</Navbar.Collapse>
+			</Navbar>
     </div>
   )
 }
@@ -21,13 +35,17 @@ const Menu = () => {
 const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
-    <ul>
-      {anecdotes.map(anecdote => 
-				<li key={anecdote.id} >
-					<Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-				</li>
-			)}
-    </ul>
+		<Table striped>
+			<tbody>
+				{anecdotes.map(anecdote => 
+					<tr key={anecdote.id} >
+						<td>
+							<Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+						</td>
+					</tr>
+				)}
+			</tbody>
+		</Table>
   </div>
 )
 
@@ -96,23 +114,31 @@ const CreateNew = (props) => {
   return (
     <div>
       <h2>create a new anecdote</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          content
-					{}
-          <input {...content} reset='1'/>
-        </div>
-        <div>
-          author
-          <input {...author} reset='1'/>
-        </div>
-        <div>
-          url for more info
-          <input {...info} reset='1'/>
-        </div>
-        <button>create</button>
-				<button type="button" onClick={reset}>reset</button>
-			</form>
+      <Form onSubmit={handleSubmit}>
+				<Form.Group>
+					<Form.Label>content</Form.Label>
+					<Form.Control
+						{...content}
+						reset='1'
+					/>
+					<Form.Label>author</Form.Label>
+					<Form.Control
+						{...author}
+						reset='1'
+					/>
+					<Form.Label>info</Form.Label>
+					<Form.Control
+						{...info}
+						reset='1'
+					/>
+					<Button type="submit" variant="primary">
+						create
+					</Button>
+					<Button type="button" variant="primary" onClick={reset}>
+						reset
+					</Button>
+				</Form.Group>
+			</Form>
     </div>
   )
 }
@@ -162,10 +188,14 @@ const App = () => {
   }
 
   return (
-			<div>
+			<div className="container">
 				<h1>Software anecdotes</h1>
 				<Menu />
-				{notification}
+				{(notification &&
+					<Alert variant="success">
+						{notification}
+					</Alert>
+				)}
 				<Switch>
 					<Route path="/create">
 						<CreateNew addNew={addNew} setNotification={setNotification} />
